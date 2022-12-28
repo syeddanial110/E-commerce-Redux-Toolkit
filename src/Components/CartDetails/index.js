@@ -95,12 +95,7 @@ const Index = (props) => {
 
           </>
         )}
-        <Grid item container mt={2}>
-          <Grid item xs={2}>
-            <Button variant="contained" className={classes.saveBtn}>
-              Save
-            </Button>
-          </Grid>
+        <Grid item container mt={2}>  
           <Grid item xs={2}>
             <Button
               variant="outlined"
