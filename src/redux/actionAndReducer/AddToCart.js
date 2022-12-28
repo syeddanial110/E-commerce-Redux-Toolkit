@@ -63,11 +63,13 @@ export const AddToCart = createSlice({
       console.log('state', state)
       console.log('action', action)
       let sum = 0
-      state.cart = state.items.length + 1
+      state.cart += 1
       state.items.push(action.payload)
     },
     removeItem(state, action) {
       state.cart = state.cart - 1
+      console.log('action', action)
+      state.items.splice(action.payload, 1)
     },
   },
 })
