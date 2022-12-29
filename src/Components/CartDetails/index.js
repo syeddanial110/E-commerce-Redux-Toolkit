@@ -1,5 +1,5 @@
 import { CloudDoneSharp } from '@mui/icons-material'
-import { Box, Button, Grid, Stack, Typography } from '@mui/material'
+import { Badge, Box, Button, Grid, Stack, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -50,52 +50,70 @@ const Index = (props) => {
 
   useEffect(() => {
     let sum = 0
-    let add = data.items.reduce((prev = 0, current) => {
-      return prev + parseInt(current.price)
-    }, sum)
+    let y = 0
+
+    let x = data.items.filter((item) => {
+      if (item.quantity > 1) {
+        y = parseInt(item.price)
+        y *= item.quantity
+        console.log('y', y)
+        sum += y
+      } else {
+        sum += parseInt(item.price)
+      }
+      return item
+    })
+    console.log('x', x)
+    console.log('sum', sum)
+    // let add = data.items.reduce((prev = 0, current) => {
+    //   return prev + parseInt(current.price)
+    // }, sum)
     // let add = data.items.reduce((prev, current) => parseInt(prev.price) + parseInt(current.price), sum)
-    setTotalPrice(add)
-    console.log('add', add)
+    setTotalPrice(sum)
+    // console.log('add', add)
   }, [data.items])
 
   return (
     <Grid container>
       <Grid item xs={8}>
-        {data?.items.length > 0 ? data?.items.map((item, i) => {
-          return (
-            <>
-              <Grid item container mt={2} sx={{ border: '1px solid' }}>
-                <Grid item xs={3}>
-                  <img alt="image" src={item.image} height={150} />
-                </Grid>
-                <Grid item xs={8}>
-                  <Stack justifyContent="space-around" sx={{ height: 150 }}>
-                    <Typography>{item.name}</Typography>
-                    <Typography>${item.price}</Typography>
-                  </Stack>
-                </Grid>
-                <Grid
-                  item
-                  xs={1}
-                  sx={{ display: 'flex', justifyContent: 'flex-end' }}
-                >
-                  <Box
-                    sx={{ '&:hover': { cursor: 'pointer' } }}
-                    onClick={() => removeItemFomCart(i)}
+        {data?.items.length > 0 ? (
+          data?.items.map((item, i) => {
+            return (
+              <>
+                <Grid item container mt={2} sx={{ border: '1px solid' }}>
+                  <Grid item xs={3}>
+                    <Badge badgeContent={item.quantity} color="info">
+                      <img alt="image" src={item.image} height={150} />
+                    </Badge>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Stack justifyContent="space-around" sx={{ height: 150 }}>
+                      <Typography>{item.name}</Typography>
+                      <Typography>Price: ${item.price}</Typography>
+                    </Stack>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={1}
+                    sx={{ display: 'flex', justifyContent: 'flex-end' }}
                   >
-                    <CloseIcon />
-                  </Box>
+                    <Box
+                      sx={{ '&:hover': { cursor: 'pointer' } }}
+                      onClick={() => removeItemFomCart(i)}
+                    >
+                      <CloseIcon />
+                    </Box>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </>
-          )
-        }) : (
+              </>
+            )
+          })
+        ) : (
           <>
             <Typography mt={2}>Back to shop</Typography>
-
           </>
         )}
-        <Grid item container mt={2}>  
+        <Grid item container mt={2}>
           <Grid item xs={2}>
             <Button
               variant="outlined"
@@ -103,14 +121,14 @@ const Index = (props) => {
               onClick={() => {
                 setToggleCart(false)
               }}
-            //   color="white"
+              //   color="white"
             >
               Cancel
             </Button>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={4} sx={{ border: "1px solid", }}>
+      <Grid item xs={4} sx={{ border: '1px solid' }}>
         <Stack spacing={2} sx={{ height: '100% !important' }}>
           {data?.items.map((item) => {
             // let sum = 0
@@ -118,16 +136,15 @@ const Index = (props) => {
             // setTotalPrice(sum)
             return (
               <>
-                <Stack direction="row" justifyContent="space-between" p={2} >
+                <Stack direction="row" justifyContent="space-between" p={2}>
                   <Typography>{item.name}</Typography>
                   <Typography> ${item.price}</Typography>
                 </Stack>
               </>
             )
-
           })}
           <Typography>Total: {totalPrice}</Typography>
-          <Button sx={{ justifySelf: "flex-end" }}>Check out</Button>
+          <Button sx={{ justifySelf: 'flex-end' }}>Check out</Button>
         </Stack>
       </Grid>
     </Grid>

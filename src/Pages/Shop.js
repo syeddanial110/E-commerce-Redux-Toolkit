@@ -23,29 +23,11 @@ const Shop = (props) => {
   const dataredux = useSelector((state) => state.addToCart)
   console.log('dataredux', dataredux)
 
-  const handleIncrement = (e, elm) => {
-    console.log('elm', elm)
-    let sum = 0
-    setCount(count + 1)
-    // const dataObj = {
-    //   cart: count,
-    //   name: elm.name,
-    //   description: elm.description,
-    //   price: elm.price,
-    // }
-    // console.log('dataObj', dataObj)
-    // dispatch(addCartData(elm))
-    // dispatch(userAdded({ name: 'danial' }))
-    // dispatch(
-    //   addSomething({
-    //     name: elm.name,
-    //     price: elm.price,
-    //     cart: count + 1
-    //   }),
-    // )
-    const dataObj = {
-      elm,
-      cart: sum + 1,
+  const handleAddToCart = (e, elm) => {
+    let sum = 1
+    let dataObj = {
+      name: elm.name,
+      price: elm.price,
     }
     dispatch(addCartData(elm))
   }
@@ -75,7 +57,7 @@ const Shop = (props) => {
                     }
                     leftBtnTitle={'Add to Cart'}
                     rightBtnTitle={'Wishlist'}
-                    leftCb={(e) => handleIncrement(e, item)}
+                    leftCb={(e) => handleAddToCart(e, item)}
                   />
                 </Grid>
               )
