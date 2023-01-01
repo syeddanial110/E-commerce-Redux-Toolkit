@@ -8,7 +8,10 @@ const STATUSES = Object.freeze({
 
 const initialState = {
   cart: 0,
-  items: [],
+  cartData: [],
+  wishlistData: [],
+  wishlist: 0,
+
   //  status: STATUSES
 }
 
@@ -17,21 +20,44 @@ export const AddToCart = createSlice({
   initialState,
   reducers: {
     addCartData(state, action) {
-      // let x = state.items.find((elm) => elm.id == action.payload.id)
+      // let x = state.cartData.find((elm) => elm.id == action.payload.id)
       // console.log('x', x)
-      let item = state.items.find((i) => i.id === action.payload.id)
+      let item = state.cartData.find((i) => i.id === action.payload.id)
       if (item) {
         item.quantity++
       } else {
         state.cart += 1
-        state.items.push(action.payload)
+        state.cartData.push(action.payload)
       }
       // state.cart += 1
-      // state.items.push(action.payload)
+      // state.cartData.push(action.payload)
     },
     removeItem(state, action) {
-      state.cart -= 1
-      state.items.splice(action.payload, 1)
+      let item = state.cartData.find((i) => i.id === action.payload.item.id)
+      if (item && item.quantity > 1) {
+        item.quantity--
+      } else {
+        state.cart -= 1
+        state.cartData.splice(action.payload.index, 1)
+      }
+    },
+    addWishlist(state, action) {
+      let item = state.wishlistData.find((i) => i.id === action.payload.id)
+      if (item) {
+        item.quantity++
+      } else {
+        state.wishlist += 1
+        state.wishlistData.push(action.payload)
+      }
+    },
+    removeWhishlist(state, action) {
+      let item = state.wishlistData.find((i) => i.id === action.payload.item.id)
+      if (item && item.quantity > 1) {
+        item.quantity--
+      } else {
+        state.wishlist -= 1
+        state.wishlistData.splice(action.payload.index, 1)
+      }
     },
     setProduct(state, action) {
       state.cart = action.payload
@@ -52,7 +78,13 @@ export const AddToCart = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { addCartData, removeItem, setProduct } = AddToCart.actions
+export const {
+  addCartData,
+  removeItem,
+  setProduct,
+  addWishlist,
+  removeWhishlist,
+} = AddToCart.actions
 
 export default AddToCart.reducer
 

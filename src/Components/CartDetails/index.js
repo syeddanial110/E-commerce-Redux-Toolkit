@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CloseIcon from '@mui/icons-material/Close'
 import { removeItem } from '../../redux/actionAndReducer/AddToCart'
+import StripeCheckout from 'stripe-checkout'
+import StripePayment from '../StripePayment'
 
 // const useStyle = makeStyles(() => ({
 //   cancelBtn: {
@@ -35,7 +37,7 @@ const useStyle = makeStyles(() => ({
   },
 }))
 const Index = (props) => {
-  const { setToggleCart } = props
+  const { setToggleCart, isSummaryTotal, setToggleWishlist } = props
   const classes = useStyle()
   const dispatch = useDispatch()
   const [totalPrice, setTotalPrice] = useState()
@@ -44,27 +46,32 @@ const Index = (props) => {
   console.log('dataReducer', data)
   console.log('totalPrice', totalPrice)
 
-  const removeItemFomCart = (index) => {
-    dispatch(removeItem(index))
+  const removeItemFomCart = (item, index) => {
+    const dataObj = {
+      item,
+      index,
+    }
+    dispatch(removeItem(dataObj))
   }
+  var myData = isSummaryTotal ? data?.wishlistData : data?.cartData
 
   useEffect(() => {
     let sum = 0
     let y = 0
 
-    let x = data.items.filter((item) => {
+    let x = data.cartData.filter((item) => {
       if (item.quantity > 1) {
         y = parseInt(item.price)
         y *= item.quantity
-        console.log('y', y)
+        // console.log('y', y)
         sum += y
       } else {
         sum += parseInt(item.price)
       }
       return item
     })
-    console.log('x', x)
-    console.log('sum', sum)
+    // console.log('x', x)
+    // console.log('sum', sum)
     // let add = data.items.reduce((prev = 0, current) => {
     //   return prev + parseInt(current.price)
     // }, sum)
@@ -73,11 +80,26 @@ const Index = (props) => {
     // console.log('add', add)
   }, [data.items])
 
+  const handleToken = (token, addresses) => {
+    // Send the token and the product price to your server to charge the user's credit card
+    fetch('/charge', {
+      method: 'POST',
+      body: JSON.stringify({
+        token: token.id,
+        amount: totalPrice * 100,
+      }),
+    }).then((response) => {
+      if (response.ok) {
+        console.log('Purchase completed successfully')
+      }
+    })
+  }
+
   return (
     <Grid container>
       <Grid item xs={8}>
-        {data?.items.length > 0 ? (
-          data?.items.map((item, i) => {
+        {data?.cartData.length > 0 ? (
+          myData.map((item, i) => {
             return (
               <>
                 <Grid item container mt={2} sx={{ border: '1px solid' }}>
@@ -99,7 +121,7 @@ const Index = (props) => {
                   >
                     <Box
                       sx={{ '&:hover': { cursor: 'pointer' } }}
-                      onClick={() => removeItemFomCart(i)}
+                      onClick={() => removeItemFomCart(item, i)}
                     >
                       <CloseIcon />
                     </Box>
@@ -119,7 +141,11 @@ const Index = (props) => {
               variant="outlined"
               className={classes.cancelBtn}
               onClick={() => {
-                setToggleCart(false)
+                if (isSummaryTotal == true) {
+                  setToggleWishlist(false)
+                } else {
+                  setToggleCart(false)
+                }
               }}
               //   color="white"
             >
@@ -128,9 +154,13 @@ const Index = (props) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={4} sx={{ border: '1px solid' }}>
+      <Grid
+        item
+        xs={4}
+        sx={{ border: '1px solid', display: isSummaryTotal ? 'none' : 'block' }}
+      >
         <Stack spacing={2} sx={{ height: '100% !important' }}>
-          {data?.items.map((item) => {
+          {data?.cartData.map((item) => {
             // let sum = 0
             // sum += parseInt(item.price)
             // setTotalPrice(sum)
@@ -144,7 +174,21 @@ const Index = (props) => {
             )
           })}
           <Typography>Total: {totalPrice}</Typography>
-          <Button sx={{ justifySelf: 'flex-end' }}>Check out</Button>
+          {/* <Button sx={{ justifySelf: 'flex-end' }}>Check out</Button> */}
+          {/* <StripeCheckout
+            stripeKey={"sk_test_51MJyY9BTk5iDuYQlGs9WzNcZJFJW8iocPSEArqV2SfKJC4RMyhUNf1cJjums1sWiuIqyPNuw0fit9vqKiDIXQOxm00iVYp6yCJ"} // Your Stripe publishable key
+            token={handleToken} // Callback function that is called when the checkout process is complete
+            amount={totalPrice * 100} // Your product price in cents
+            name="Your Product" // The name of your product
+            billingAddress
+            shippingAddress
+            image="/your-product-image.jpg" // The URL of your product image
+            currency="USD" // The currency for the product price
+            panelLabel="Pay Now" // The label for the payment button
+            zipCode
+          /> */}
+
+          <StripePayment price={totalPrice} />
         </Stack>
       </Grid>
     </Grid>

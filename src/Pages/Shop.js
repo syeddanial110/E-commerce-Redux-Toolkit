@@ -11,26 +11,29 @@ import {
   addCartData,
   addSomething,
   add,
+  addWishlist,
 } from '../redux/actionAndReducer/AddToCart'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Shop = (props) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const [cart, setCart] = useState(0)
   const [count, setCount] = useState(0)
+  const [selectedId, setSelectedId] = useState('')
 
   const dataredux = useSelector((state) => state.addToCart)
   console.log('dataredux', dataredux)
 
   const handleAddToCart = (e, elm) => {
-    let sum = 1
-    let dataObj = {
-      name: elm.name,
-      price: elm.price,
-    }
     dispatch(addCartData(elm))
   }
+  const handleAddToWishlist = (e, elm) => {
+    dispatch(addWishlist(elm))
+  }
+
   return (
     <MainHeadrer>
       <Grid container>
@@ -48,8 +51,15 @@ const Shop = (props) => {
                   xs={4}
                   mt={3}
                   sx={{ display: 'flex', justifyContent: 'center' }}
+                  // onClick={() => {
+                  //   // navigate(`/shop/${item.id}`)
+                  //   navigate(`/contact/${item.id}`)
+                  // }}
                 >
                   <ProductCard
+                    boxOnClick={() => {
+                      navigate(`/shop/${item.id}`)
+                    }}
                     imageSrc={item.image}
                     productTitle={item.name}
                     productDescription={
@@ -58,6 +68,7 @@ const Shop = (props) => {
                     leftBtnTitle={'Add to Cart'}
                     rightBtnTitle={'Wishlist'}
                     leftCb={(e) => handleAddToCart(e, item)}
+                    rightCb={(e) => handleAddToWishlist(e, item)}
                   />
                 </Grid>
               )

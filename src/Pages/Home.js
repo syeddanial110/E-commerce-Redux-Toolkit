@@ -21,12 +21,13 @@ const useStyle = makeStyles(() => ({
   listItem: {
     display: 'inline-flex !important',
   },
-  bgImg:{
-    backgroundImage: "url('https://assets-global.website-files.com/6009ec8cda7f305645c9d91b/60107f25c4e460d97bb8aec2_6002086f72b727312201e451_ecommerce-website-design-examples.jpeg')",
-    backgroundRepeat:"no-repeat",
-    backgroundSize:"cover",
-    height:"100vh"
-  }
+  bgImg: {
+    backgroundImage:
+      "url('https://assets-global.website-files.com/6009ec8cda7f305645c9d91b/60107f25c4e460d97bb8aec2_6002086f72b727312201e451_ecommerce-website-design-examples.jpeg')",
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    height: '100vh',
+  },
 }))
 
 const Home = () => {
@@ -36,16 +37,29 @@ const Home = () => {
   return (
     <MainHeadrer>
       <Grid container justifyContent="center" alignItems="center">
-        <Grid item xs={12} className={classes.bgImg} >
-          <Button
-        //   sx={{display:"flex", justifyContent:"center"}}
-            variant="contained"
-            onClick={() => {
-              navigate('/shop')
-            }}
+        <Grid item xs={12} className={classes.bgImg}>
+          <Grid
+            item
+            container
+            justifyContent="center"
+            alignItems="center"
+            sx={{ height: '100%' }}
           >
-            Shop Now!
-          </Button>
+            <Grid item xs={2}>
+              <Button
+                sx={{
+                  backgroundColor: 'red',
+                  '&:hover': { backgroundColor: 'black', color: 'white' },
+                }}
+                variant="contained"
+                onClick={() => {
+                  navigate('/shop')
+                }}
+              >
+                Shop Now!
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </MainHeadrer>

@@ -17,8 +17,9 @@ import Badge from '@mui/material/Badge'
 import MailIcon from '@mui/icons-material/Mail'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { useSelector } from 'react-redux'
-import AddToCartSideBar from '../Components/AddToCartSideBar'
 import CartDetails from '../Components/CartDetails'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import WishlistDetails from '../Components/WihlistDetails'
 
 const navLocation = [
   {
@@ -71,9 +72,10 @@ const useStyle = makeStyles(() => ({
 const MainHeadrer = (props) => {
   const classes = useStyle()
 
-  const dataredux = useSelector((state) => state.addToCart.cart)
+  const dataredux = useSelector((state) => state.addToCart)
 
   const [toggleCart, setToggleCart] = useState(false)
+  const [toggleWishlist, setToggleWishlist] = useState(false)
 
   const [state, setState] = React.useState({
     right: false,
@@ -97,7 +99,7 @@ const MainHeadrer = (props) => {
           <Grid item container alignItems="center">
             <Grid item xs={3} className={classes.webLogo}>
               <Typography className={classes.typo} variant="h4">
-                SD
+                E-commerce
               </Typography>
             </Grid>
             <Grid
@@ -119,15 +121,28 @@ const MainHeadrer = (props) => {
             </Grid>
             <Grid
               item
-              xs={2}
-              sx={{ display: 'flex', justifyContent: 'flex-end' }}
+              xs={3}
+              sx={{ display: 'flex', justifyContent: 'center' }}
             >
               <Badge
-                badgeContent={dataredux}
+                sx={{ marginRight: 2 }}
+                badgeContent={dataredux.wishlist}
+                color="primary"
+                // onClick={toggleDrawer('right', true)}
+                onClick={() => {
+                  setToggleWishlist(true)
+                  setToggleCart(false)
+                }}
+              >
+                <FavoriteIcon color="action" />
+              </Badge>
+              <Badge
+                badgeContent={dataredux.cart}
                 color="primary"
                 // onClick={toggleDrawer('right', true)}
                 onClick={() => {
                   setToggleCart(true)
+                  setToggleWishlist(false)
                 }}
               >
                 <ShoppingCartIcon color="action" />
@@ -138,17 +153,13 @@ const MainHeadrer = (props) => {
       </Grid>
       <Grid container>
         <Grid item xs={12}>
-          <AddToCartSideBar state={state} toggleDrawer={toggleDrawer} />
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={12}>
-          {/* {toggleCart && <CartDetails />} */}
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={12}>
-        {toggleCart ? <CartDetails setToggleCart={setToggleCart} /> : props.children}
+          {toggleCart ? (
+            <CartDetails setToggleCart={setToggleCart}  />
+          ) : toggleWishlist ? (
+            <WishlistDetails setToggleWishlist={setToggleWishlist} />
+          ) : (
+            props.children
+          )}
           {/* {props.children} */}
         </Grid>
       </Grid>
